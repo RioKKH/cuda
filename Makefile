@@ -308,7 +308,8 @@ all: build
 
 build: hello checkDimension defineGridBlock sumArraysOnGPU-small-case\
        sumArraysOnGPU-timer sumArraysOnHost checkThreadIndex\
-       sumMatrixOnGPU-2D-grid-2D-block
+       sumMatrixOnGPU-2D-grid-2D-block sumMatrixOnGPU-1D-grid-1D-block\
+       sumMatrixOnGPU-2D-grid-1D-block checkDeviceInfor checkNumOfGPUProcessors\
 
 check.deps:
 ifeq ($(SAMPLE_ENABLED),0)
@@ -367,6 +368,29 @@ sumMatrixOnGPU-2D-grid-2D-block.o: sumMatrixOnGPU-2D-grid-2D-block.cu
 sumMatrixOnGPU-2D-grid-2D-block: sumMatrixOnGPU-2D-grid-2D-block.o
 	$(EXEC) $(NVCC) $(ALL_LDFLAGS) $(GENCODE_FLAGS) -o $@ $+ $(LIBRARIES)
 
+sumMatrixOnGPU-1D-grid-1D-block.o: sumMatrixOnGPU-1D-grid-1D-block.cu
+	$(EXEC) $(NVCC) $(INCLUDES) $(ALL_CCFLAGS) $(GENCODE_FLAGS) -o $@ -c $<
+
+sumMatrixOnGPU-1D-grid-1D-block: sumMatrixOnGPU-1D-grid-1D-block.o
+	$(EXEC) $(NVCC) $(ALL_LDFLAGS) $(GENCODE_FLAGS) -o $@ $+ $(LIBRARIES)
+
+sumMatrixOnGPU-2D-grid-1D-block.o: sumMatrixOnGPU-2D-grid-1D-block.cu
+	$(EXEC) $(NVCC) $(INCLUDES) $(ALL_CCFLAGS) $(GENCODE_FLAGS) -o $@ -c $<
+
+sumMatrixOnGPU-2D-grid-1D-block: sumMatrixOnGPU-2D-grid-1D-block.o
+	$(EXEC) $(NVCC) $(ALL_LDFLAGS) $(GENCODE_FLAGS) -o $@ $+ $(LIBRARIES)
+
+checkDeviceInfor.o: checkDeviceInfor.cu
+	$(EXEC) $(NVCC) $(INCLUDES) $(ALL_CCFLAGS) $(GENCODE_FLAGS) -o $@ -c $<
+
+checkDeviceInfor: checkDeviceInfor.o
+	$(EXEC) $(NVCC) $(ALL_LDFLAGS) $(GENCODE_FLAGS) -o $@ $+ $(LIBRARIES)
+
+checkNumOfGPUProcessors.o: checkNumOfGPUProcessors.cu
+	$(EXEC) $(NVCC) $(INCLUDES) $(ALL_CCFLAGS) $(GENCODE_FLAGS) -o $@ -c $<
+
+checkNumOfGPUProcessors: checkNumOfGPUProcessors.o
+	$(EXEC) $(NVCC) $(ALL_LDFLAGS) $(GENCODE_FLAGS) -o $@ $+ $(LIBRARIES)
 
 
 run: build
@@ -378,8 +402,11 @@ clean:
 	rm -f ./sumArraysOnDevice
 	rm -f ./sumArraysOnGPU-small-case
 	rm -f ./sumArraysOnGPU-timer
-	rm -f ./sumArraysOnGPU-2D-grid-2D-block
+	rm -f ./sumMatrixOnGPU-2D-grid-2D-block
+	rm -f ./sumMatrixOnGPU-1D-grid-1D-block
+	rm -f ./sumMatrixOnGPU-2D-grid-1D-block
 	rm -f ./checkThreadIndex
+	rm -f ./checkNumOfGPUProcessors
 	rm -f *.o
 	# rm -rf ../../bin/$(TARGET_ARCH)/$(TARGET_OS)/$(BUILD_TYPE)/simplePrintf
 
